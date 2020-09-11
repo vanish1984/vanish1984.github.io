@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme=""><head>
+    <title> 呆萌儿叔叔 | Org-mode 与 markdown 语法对比 </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.74.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="「我们都愤世嫉俗却又同流合污」">
+    
+    <link rel="stylesheet" href="http://dm84.cc/css/style.min.5be3a155aa89a24586c761b1b5538c4040e3735ee32ac12a708dc1696c0982f5.css" integrity="sha256-W&#43;OhVaqJokWGx2GxtVOMQEDjc17jKsEqcI3BaWwJgvU=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/syntax.4b5e2a1609941f6024c52e6d7466a66b288ce540ffa6dc93291719ed22124fc6.css" integrity="sha256-S14qFgmUH2AkxS5tdGamayiM5UD/ptyTKRcZ7SIST8Y=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/custom.a170e0340b825986064da9d3bbf40caf070b4d8fded76d0f247d99e358028691.css" integrity="sha256-oXDgNAuCWYYGTanTu/QMrwcLTY/e120PJH2Z41gChpE=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/vue.b226fa97291fd73dff0e4d167b43007042767458e8b9c88d36d7e4d5e9ad1e7e.css" integrity="sha256-sib6lykf1z3/Dk0We0MAcEJ2dFjouciNNtfk1emtHn4=" crossorigin="anonymous" type="text/css"><link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    <link rel="shortcut icon" href="http://dm84.ccfavicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="http://dm84.ccapple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="http://dm84.ccfavicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="http://dm84.ccfavicon-16x16.png">
+    <link rel="canonical" href="http://dm84.cc/posts/org-mode-%E4%B8%8E-markdown-%E8%AF%AD%E6%B3%95%E5%AF%B9%E6%AF%94/">
+    
+    
+    <script type="text/javascript" src="http://dm84.cc/js/anatole-header.min.7e2fc0724240b28c6e214687e73a4a6eb6c196bbace546b9dc86e94cca120b5c.js" integrity="sha256-fi/AckJAsoxuIUaH5zpKbrbBlrus5Ua53IbpTMoSC1w=" crossorigin="anonymous"></script>
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Org-mode 与 markdown 语法对比"/>
+<meta name="twitter:description" content="
+整理了一下 orgmode 和 markdown 的语法对比,
+有可能 Hugo 和 markdown 语法转义不是全部支持
+"/>
+
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+        <div class="title">
+            
+            <h3 title=""><a href="/">Flipped</a></h3>
+            <div class="description">
+                <p>「我们都愤世嫉俗却又同流合污」</p>
+            </div>
+        </div>
+    </div>
+    <ul class="social-links">
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; 呆萌儿叔叔 2020 </div>
+    </div>
+</div>
+</div>
+<div class="main">
+            <div class="page-top animated fadeInDown">
+    <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false" >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    <ul class="nav" id="navMenu">
+        
+        
+        
+        <li><a  href="/"  title="">Posts</a></li>
+        
+        
+        <li><a  href="/about/"  title="">About</a></li>
+        
+        
+        <li class="theme-switch-item">
+        <a class="theme-switch" title="Switch Theme">
+            <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+        </a>
+        </li>
+    </ul>
+</div>
+
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>Org-mode 与 markdown 语法对比 
+        </h3>
+        
+        <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">Tue, Sep 8, 2020</span>
+          <i class="fa fa-clock-o"></i><span class="reading-time">One-minute read</span>
+        </div>
+        
+        </div>
+
+    <blockquote>
+<p>整理了一下 orgmode 和 markdown 的语法对比,
+有可能 Hugo 和 markdown 语法转义不是全部支持</p>
+</blockquote>
+<h2 id="标题">标题</h2>
+<div class="highlight"><pre class="chroma"><code class="language-org" data-lang="org">-----
+
+ <span class="k">* </span>一级标题
+ ** 二级标题
+ *** 三级标题
+...
+
+-----
+
+ # 一级标题
+ ## 二级标题
+ ### 三级标题
+...
+</code></pre></div><h2 id="引用">引用</h2>
+<pre><code class="language-nil" data-lang="nil">-----
+
+ #+BEGIN_QUOTE
+ 引用的文字
+ #+END_QUOTE
+
+-----
+
+ &gt; 引用的文字
+</code></pre><h2 id="超链接">超链接</h2>
+<pre><code class="language-nil" data-lang="nil">-----
+
+ 形式1:  [[http://url][描述]]
+ 形式2:  [[http://url]]
+
+-----
+</code></pre><h2 id="图片">图片</h2>
+<pre><code class="language-nil" data-lang="nil">-----
+
+ #+CAPTION: This is the caption for the next figure link
+ #+NAME:   fig:SED-HR4049
+ [[link_to_image.jpg]]
+
+-----
+</code></pre><h2 id="表格">表格</h2>
+<pre><code class="language-nil" data-lang="nil">-----
+
+| This | is | My | First | table |
+|-
+
+&lt;TAB&gt;
+
+-----
+</code></pre><h2 id="列表">列表</h2>
+<pre><code class="language-nil" data-lang="nil">-----
+
+ * 列表项1
+    + 子列表项
+ * 列表项2
+    1. 子列表项
+ * 列表项3
+
+ 1. 列表项1
+   * 子列表项
+ 2. 列表项2
+
+-----
+</code></pre><h2 id="特殊格式">特殊格式</h2>
+<h3 id="加粗">加粗</h3>
+<p><strong>加粗</strong></p>
+<pre><code class="language-nil" data-lang="nil">-----
+
+*加粗*
+
+-----
+</code></pre><h3 id="下划线">下划线</h3>
+<p><!-- raw HTML omitted -->下划线<!-- raw HTML omitted --></p>
+<pre><code class="language-nil" data-lang="nil">-----
+
+_下划线_
+
+-----
+</code></pre><h3 id="删除线">删除线</h3>
+<p><del>删除线</del></p>
+<pre><code class="language-nil" data-lang="nil">-----
+
++删除线+
+
+-----
+</code></pre><h3 id="斜体">斜体</h3>
+<p><em>斜体</em></p>
+<pre><code class="language-nil" data-lang="nil">-----
+
+/斜体/
+
+-----
+</code></pre><h3 id="下标">下标</h3>
+<p>H_2O  ：水的分子式</p>
+<pre><code class="language-nil" data-lang="nil">-----
+
+H_2O  ：水的分子式
+
+-----
+</code></pre><h3 id="上标">上标</h3>
+<p>E=mc^2</p>
+<pre><code class="language-nil" data-lang="nil">-----
+
+E=mc^2
+
+-----
+</code></pre><h3 id="行内代码">行内代码</h3>
+<p><code>#include &lt;stdio.h&gt;</code> 或者 <code>#include &lt;stdio.h&gt;</code></p>
+<pre><code class="language-nil" data-lang="nil">-----
+
+=#include &lt;stdio.h&gt;= 或者 ~#include &lt;stdio.h&gt;~
+
+-----
+</code></pre>
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+<span class="separator"><a class="category" href="/categories/posts/">posts</a></span>
+
+        
+    <span class="separator"><a class="tag" href="/tags/emacs/">emacs</a><a class="tag" href="/tags/orgmode/">orgmode</a></span>
+
+      </div>
+    </div>
+
+    
+    <div id="fb_comments_container">
+      <h2>comments</h2>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "vanish1984" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>       
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+
+
+
+<script type="text/javascript" src="http://dm84.cc/js/jquery.min.86b1e8f819ee2d9099a783e50b49dff24282545fc40773861f9126b921532e4c.js" integrity="sha256-hrHo&#43;BnuLZCZp4PlC0nf8kKCVF/EB3OGH5EmuSFTLkw=" crossorigin="anonymous"></script>
+
+
+
+
+<script type="text/javascript" src="http://dm84.cc/js/bundle.min.0f9c74cb78f13d1f15f33daff4037c70354f98acfbb97a6f61708966675c3cae.js" integrity="sha256-D5x0y3jxPR8V8z2v9AN8cDVPmKz7uXpvYXCJZmdcPK4=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="http://dm84.cc/js/medium-zoom.min.92f21c856129f84aeb719459b3e6ac621a3032fd7b180a18c04e1d12083f8aba.js" integrity="sha256-kvIchWEp&#43;ErrcZRZs&#43;asYhowMv17GAoYwE4dEgg/iro=" crossorigin="anonymous"></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-177278316-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

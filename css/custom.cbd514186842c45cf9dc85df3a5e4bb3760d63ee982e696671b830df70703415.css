@@ -1,0 +1,15 @@
+.sidebar {
+    width:28%;
+}
+
+.page-top {
+    width: 72%;
+}
+
+.content {
+    width: 72%;
+}
+
+.theme-switch {
+    display: none;
+}

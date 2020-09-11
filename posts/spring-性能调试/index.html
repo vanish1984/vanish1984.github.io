@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" data-theme=""><head>
+    <title> 呆萌儿叔叔 | Spring 性能调试记录(一) </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.74.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="「我们都愤世嫉俗却又同流合污」">
+    
+    <link rel="stylesheet" href="http://dm84.cc/css/style.min.5be3a155aa89a24586c761b1b5538c4040e3735ee32ac12a708dc1696c0982f5.css" integrity="sha256-W&#43;OhVaqJokWGx2GxtVOMQEDjc17jKsEqcI3BaWwJgvU=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/syntax.4b5e2a1609941f6024c52e6d7466a66b288ce540ffa6dc93291719ed22124fc6.css" integrity="sha256-S14qFgmUH2AkxS5tdGamayiM5UD/ptyTKRcZ7SIST8Y=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/custom.a170e0340b825986064da9d3bbf40caf070b4d8fded76d0f247d99e358028691.css" integrity="sha256-oXDgNAuCWYYGTanTu/QMrwcLTY/e120PJH2Z41gChpE=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/vue.b226fa97291fd73dff0e4d167b43007042767458e8b9c88d36d7e4d5e9ad1e7e.css" integrity="sha256-sib6lykf1z3/Dk0We0MAcEJ2dFjouciNNtfk1emtHn4=" crossorigin="anonymous" type="text/css"><link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    <link rel="shortcut icon" href="http://dm84.ccfavicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="http://dm84.ccapple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="http://dm84.ccfavicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="http://dm84.ccfavicon-16x16.png">
+    <link rel="canonical" href="http://dm84.cc/posts/spring-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95/">
+    
+    
+    <script type="text/javascript" src="http://dm84.cc/js/anatole-header.min.7e2fc0724240b28c6e214687e73a4a6eb6c196bbace546b9dc86e94cca120b5c.js" integrity="sha256-fi/AckJAsoxuIUaH5zpKbrbBlrus5Ua53IbpTMoSC1w=" crossorigin="anonymous"></script>
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Spring 性能调试记录(一)"/>
+<meta name="twitter:description" content="最近有人问我负载与性能，我在回答了我的结果后，对方不太相信。
+同时由于之前调优的时间也比较久远，有诸多遗忘之处，仅记得一个结果，本着无聊的态度，记录一次调试过程。"/>
+
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+        <div class="title">
+            
+            <h3 title=""><a href="/">Flipped</a></h3>
+            <div class="description">
+                <p>「我们都愤世嫉俗却又同流合污」</p>
+            </div>
+        </div>
+    </div>
+    <ul class="social-links">
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; 呆萌儿叔叔 2020 </div>
+    </div>
+</div>
+</div>
+<div class="main">
+            <div class="page-top animated fadeInDown">
+    <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false" >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    <ul class="nav" id="navMenu">
+        
+        
+        
+        <li><a  href="/"  title="">Posts</a></li>
+        
+        
+        <li><a  href="/about/"  title="">About</a></li>
+        
+        
+        <li class="theme-switch-item">
+        <a class="theme-switch" title="Switch Theme">
+            <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+        </a>
+        </li>
+    </ul>
+</div>
+
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>Spring 性能调试记录(一) 
+        </h3>
+        
+        <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">Thu, Sep 10, 2020</span>
+          <i class="fa fa-clock-o"></i><span class="reading-time">2-minute read</span>
+        </div>
+        
+        </div>
+
+    <p>最近有人问我负载与性能，我在回答了我的结果后，对方不太相信。</p>
+<p>同时由于之前调优的时间也比较久远，有诸多遗忘之处，仅记得一个结果，本着无聊的态度，记录一次调试过程。</p>
+<h2 id="规划">规划</h2>
+<p>模拟线上的部署环境，前端顶一个 nginx，后端使用 java &amp; spring，数据库使用 Mysql</p>
+<h2 id="调试的组件与参数包括">调试的组件与参数包括</h2>
+<ul>
+<li>Nginx</li>
+<li>Spring
+<ul>
+<li>Tomcat | Jetty 线程池</li>
+<li>数据库连接池</li>
+</ul>
+</li>
+</ul>
+<h2 id="准备">准备</h2>
+<ul>
+<li>准备一个标准 spring 项目，使用 jpa 作为持久层，tomcat 作为 web 容器，<a href="https://start.spring.io">https://start.spring.io</a> 创建一个即可。</li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml">pom.xml
+
+  <span class="nt">&lt;dependencies&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-jdbc<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-jpa<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>spring-boot-devtools<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+      <span class="nt">&lt;optional&gt;</span>true<span class="nt">&lt;/optional&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>org.projectlombok<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>lombok<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;optional&gt;</span>true<span class="nt">&lt;/optional&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>mysql<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>mysql-connector-java<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+      <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+          <span class="nt">&lt;groupId&gt;</span>org.junit.vintage<span class="nt">&lt;/groupId&gt;</span>
+          <span class="nt">&lt;artifactId&gt;</span>junit-vintage-engine<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+      <span class="nt">&lt;/exclusions&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+  <span class="nt">&lt;/dependencies&gt;</span>
+</code></pre></div><ul>
+<li>配置</li>
+</ul>
+<p>可以根据依赖看到默认 web 容器就是 tomcat</p>
+<p>先写一个简单的 controller 实现 helloworld</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">TestController</span><span class="o">.</span><span class="na">java</span>
+
+<span class="nd">@RestController</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestController</span> <span class="o">{</span>
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">&#34;/hello&#34;</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">hello</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">200</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;hello&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><blockquote>
+<p>线程 sleep 200 毫秒，模拟耗时，实际测试结果也接近 200 毫秒</p>
+</blockquote>
+<p>将 tomcat 最大线程数调整为 1，用 jmeter 测试 100 个线程同时发起，得到的结果，每秒处理约 5 个请求，总共耗时 20740
+，与预期相符。</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">application.yml<span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">server</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="k">tomcat</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="k">threads</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="k">max</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></code></pre></div><p><code>Result:</code></p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th># Samples</th>
+<th>Average</th>
+<th>Median</th>
+<th>90% Line</th>
+<th>95% Line</th>
+<th>99% Line</th>
+<th>Min</th>
+<th>Max</th>
+<th>Error %</th>
+<th>Throughput</th>
+<th>Received KB/sec</th>
+<th>Sent KB/sec</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hello</td>
+<td>100</td>
+<td>10582</td>
+<td>10492</td>
+<td>18688</td>
+<td>19714</td>
+<td>20536</td>
+<td>391</td>
+<td>20740</td>
+<td>0.00%</td>
+<td>4.80977</td>
+<td>0.57</td>
+<td>0.79</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>可以看到，所有请求都是成功的，说明当前处理线程是 1，其他线程在排队，但注意：队列是需要内存的。</p>
+</blockquote>
+<p>我将 jvm 启动参数设置为 <code>-Xmx25m</code> ，jmeter 设置为 100 个线程，此时是正常的，如果设置为 1000 个线程，则会报 OOM。</p>
+<p>如果将 jvm 启动参数设置为 <code>-Xmx250m</code> ，则不会 OOM。</p>
+<p>那么如果内存有限，又不想 OOM 的话，只能丢弃队列了，在 <code>-Xmx25m</code> 情况下，设置：</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">application.yml<span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">server</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="k">tomcat</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="k">threads</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="k">max</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">    </span><span class="k">max-connections</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span></code></pre></div><p>在 1000 个线程并发的情况下，会发生很多的丢弃错误，但是 jvm 并不会 OOM，也就是说服务并不会挂掉，高峰过去仍然正常访问，
+对于生产环境，还是很有意义的。</p>
+<p>（生产环境需要处理尽量多的请求下别挂掉，有 2 个目标，尽量多 &amp; 别挂掉）</p>
+<h2 id="进一步">进一步</h2>
+<ul>
+<li>那么怎么设置才最优呢？
+如果我设置最大内存为 1g，最大并发数设置成 200，那么理论上 1 秒钟可以处理 1000 个请求 <code>QPS1000</code> (1000ms / 200ms * 200threads)</li>
+</ul>
+<!-- raw HTML omitted -->
+<pre><code class="language-nil" data-lang="nil">application.yml
+
+server:
+  tomcat:
+    threads:
+      max: 200
+</code></pre><p>压测 10s，结果如下：</p>
+<p><code>Result:</code></p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th># Samples</th>
+<th>Average</th>
+<th>Median</th>
+<th>90% Line</th>
+<th>95% Line</th>
+<th>99% Line</th>
+<th>Min</th>
+<th>Max</th>
+<th>Error %</th>
+<th>Throughput</th>
+<th>Received KB/sec</th>
+<th>Sent KB/sec</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hello</td>
+<td>10666</td>
+<td>945</td>
+<td>1020</td>
+<td>1025</td>
+<td>1034</td>
+<td>1074</td>
+<td>201</td>
+<td>1078</td>
+<td>0.00%</td>
+<td>962.0276</td>
+<td>113.68</td>
+<td>157.83</td>
+</tr>
+</tbody>
+</table>
+<p>Throughput 达到了 962/sec，与预期差别不大。</p>
+<h2 id="阶段性结论">阶段性结论</h2>
+<p>按照当前的测试结果，如果启动 4 个 docker，每个占用 1g，那么一个 4g 内存的机器完全可以支撑 QPS4000 的并发，待测试。</p>
+<p>&lt;未完待续&gt;</p>
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+<span class="separator"><a class="category" href="/categories/posts/">posts</a></span>
+
+        
+    <span class="separator"><a class="tag" href="/tags/java/">java</a><a class="tag" href="/tags/spring/">spring</a><a class="tag" href="/tags/%E6%80%A7%E8%83%BD/">性能</a><a class="tag" href="/tags/nginx/">nginx</a></span>
+
+      </div>
+    </div>
+
+    
+    <div id="fb_comments_container">
+      <h2>comments</h2>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "vanish1984" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>       
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+
+
+
+<script type="text/javascript" src="http://dm84.cc/js/jquery.min.86b1e8f819ee2d9099a783e50b49dff24282545fc40773861f9126b921532e4c.js" integrity="sha256-hrHo&#43;BnuLZCZp4PlC0nf8kKCVF/EB3OGH5EmuSFTLkw=" crossorigin="anonymous"></script>
+
+
+
+
+<script type="text/javascript" src="http://dm84.cc/js/bundle.min.0f9c74cb78f13d1f15f33daff4037c70354f98acfbb97a6f61708966675c3cae.js" integrity="sha256-D5x0y3jxPR8V8z2v9AN8cDVPmKz7uXpvYXCJZmdcPK4=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="http://dm84.cc/js/medium-zoom.min.92f21c856129f84aeb719459b3e6ac621a3032fd7b180a18c04e1d12083f8aba.js" integrity="sha256-kvIchWEp&#43;ErrcZRZs&#43;asYhowMv17GAoYwE4dEgg/iro=" crossorigin="anonymous"></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-177278316-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

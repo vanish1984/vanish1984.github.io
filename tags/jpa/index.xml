@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JPA on Flipped</title>
+    <link>http://dm84.cc/tags/jpa/</link>
+    <description>Recent content in JPA on Flipped</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>cn-zh</language>
+    <lastBuildDate>Wed, 09 Sep 2020 16:54:00 +0800</lastBuildDate>
+    
+	<atom:link href="http://dm84.cc/tags/jpa/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>JPA 批量更新问题</title>
+      <link>http://dm84.cc/posts/jpa-%E6%89%B9%E9%87%8F%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Wed, 09 Sep 2020 16:54:00 +0800</pubDate>
+      
+      <guid>http://dm84.cc/posts/jpa-%E6%89%B9%E9%87%8F%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98/</guid>
+      <description>&lt;p&gt;今天有人问我 JPA 插入 1000 条数据很慢，简单记录一下。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

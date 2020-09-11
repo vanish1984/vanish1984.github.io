@@ -1,0 +1,30 @@
+.sidebar {
+    width:28%;
+}
+
+.page-top {
+    width: 72%;
+}
+
+.content {
+    width: 72%;
+}
+
+.theme-switch {
+    display: none;
+}
+
+@media screen and (max-width: 960px) {
+    .sidebar {
+        width: 100%;
+    }
+
+    .page-top {
+        width: 100%;
+    }
+    
+    .content {
+        width: 100%;
+    }
+}
+

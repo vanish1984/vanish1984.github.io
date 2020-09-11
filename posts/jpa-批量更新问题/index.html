@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme=""><head>
+    <title> 呆萌儿叔叔 | JPA 批量更新问题 </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.74.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="「我们都愤世嫉俗却又同流合污」">
+    
+    <link rel="stylesheet" href="http://dm84.cc/css/style.min.5be3a155aa89a24586c761b1b5538c4040e3735ee32ac12a708dc1696c0982f5.css" integrity="sha256-W&#43;OhVaqJokWGx2GxtVOMQEDjc17jKsEqcI3BaWwJgvU=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/syntax.4b5e2a1609941f6024c52e6d7466a66b288ce540ffa6dc93291719ed22124fc6.css" integrity="sha256-S14qFgmUH2AkxS5tdGamayiM5UD/ptyTKRcZ7SIST8Y=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/custom.a170e0340b825986064da9d3bbf40caf070b4d8fded76d0f247d99e358028691.css" integrity="sha256-oXDgNAuCWYYGTanTu/QMrwcLTY/e120PJH2Z41gChpE=" crossorigin="anonymous" type="text/css">
+    <link rel="stylesheet" href="http://dm84.cc/css/vue.b226fa97291fd73dff0e4d167b43007042767458e8b9c88d36d7e4d5e9ad1e7e.css" integrity="sha256-sib6lykf1z3/Dk0We0MAcEJ2dFjouciNNtfk1emtHn4=" crossorigin="anonymous" type="text/css"><link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    <link rel="shortcut icon" href="http://dm84.ccfavicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="http://dm84.ccapple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="http://dm84.ccfavicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="http://dm84.ccfavicon-16x16.png">
+    <link rel="canonical" href="http://dm84.cc/posts/jpa-%E6%89%B9%E9%87%8F%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98/">
+    
+    
+    <script type="text/javascript" src="http://dm84.cc/js/anatole-header.min.7e2fc0724240b28c6e214687e73a4a6eb6c196bbace546b9dc86e94cca120b5c.js" integrity="sha256-fi/AckJAsoxuIUaH5zpKbrbBlrus5Ua53IbpTMoSC1w=" crossorigin="anonymous"></script>
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="JPA 批量更新问题"/>
+<meta name="twitter:description" content="今天有人问我 JPA 插入 1000 条数据很慢，简单记录一下。"/>
+
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+        <div class="title">
+            
+            <h3 title=""><a href="/">Flipped</a></h3>
+            <div class="description">
+                <p>「我们都愤世嫉俗却又同流合污」</p>
+            </div>
+        </div>
+    </div>
+    <ul class="social-links">
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; 呆萌儿叔叔 2020 </div>
+    </div>
+</div>
+</div>
+<div class="main">
+            <div class="page-top animated fadeInDown">
+    <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false" >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    <ul class="nav" id="navMenu">
+        
+        
+        
+        <li><a  href="/"  title="">Posts</a></li>
+        
+        
+        <li><a  href="/about/"  title="">About</a></li>
+        
+        
+        <li class="theme-switch-item">
+        <a class="theme-switch" title="Switch Theme">
+            <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+        </a>
+        </li>
+    </ul>
+</div>
+
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>JPA 批量更新问题 
+        </h3>
+        
+        <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">Wed, Sep 9, 2020</span>
+          <i class="fa fa-clock-o"></i><span class="reading-time">2-minute read</span>
+        </div>
+        
+        </div>
+
+    <p>今天有人问我 JPA 插入 1000 条数据很慢，简单记录一下。</p>
+<h2 id="场景">场景</h2>
+<p>有人问我，插入了 1000 条数据，耗时了 2 分钟，是怎么回事。</p>
+<h2 id="开始">开始</h2>
+<p>我先启动一个最简单的 demo 项目，spring init 即可，连接本地数据库 Mysql。</p>
+<ul>
+<li>配置 <code>application.yml</code></li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">spring</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="k">datasource</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="k">url</span><span class="p">:</span><span class="w"> </span>jdbc<span class="p">:</span>mysql<span class="p">:</span>//localhost<span class="p">:</span><span class="m">3306</span>/demo<span class="p">?</span>useUnicode=<span class="kc">true</span><span class="cp">&amp;characterEncoding=UTF-8&amp;rewriteBatchedStatements=true</span><span class="w">
+</span><span class="w">    </span><span class="k">username</span><span class="p">:</span><span class="w"> </span><span class="cp">***</span><span class="w">
+</span><span class="w">    </span><span class="k">password</span><span class="p">:</span><span class="w"> </span><span class="cp">***</span><span class="w">
+</span><span class="w">    </span><span class="k">driver-class-name</span><span class="p">:</span><span class="w"> </span>com.mysql.cj.jdbc.Drive<span class="w">
+</span><span class="w">  </span><span class="k">jpa</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="k">generate-ddl</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">    </span><span class="k">hibernate</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="k">ddl-auto</span><span class="p">:</span><span class="w"> </span>update<span class="w">
+</span><span class="w">    </span><span class="k">show-sql</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">    </span><span class="k">open-in-view</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></code></pre></div><ul>
+<li>Model <code>TestEntity.java</code></li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Entity</span>
+<span class="nd">@Getter</span>
+<span class="nd">@Setter</span>
+<span class="nd">@Table</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;t_test_entity&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestEntity</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="nd">@GeneratedValue</span><span class="o">(</span>
+            <span class="n">generator</span> <span class="o">=</span> <span class="s">&#34;uuidGenerator&#34;</span>
+    <span class="o">)</span>
+    <span class="nd">@GenericGenerator</span><span class="o">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;uuidGenerator&#34;</span><span class="o">,</span>
+            <span class="n">strategy</span> <span class="o">=</span> <span class="s">&#34;uuid2&#34;</span>
+    <span class="o">)</span>
+    <span class="nd">@Column</span><span class="o">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;id&#34;</span><span class="o">,</span>
+            <span class="n">nullable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">40</span>
+    <span class="o">)</span>
+    <span class="n">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">label</span><span class="o">;</span>
+
+    <span class="nd">@Version</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">version</span><span class="o">;</span>
+
+
+<span class="o">}</span>
+</code></pre></div><ul>
+<li>Repository <code>TestEntityRepository</code></li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java">
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">TestEntityRepository</span> <span class="kd">extends</span> <span class="n">JpaRepository</span><span class="o">&lt;</span><span class="n">TestEntity</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;,</span>
+        <span class="n">JpaSpecificationExecutor</span><span class="o">&lt;</span><span class="n">TestEntity</span><span class="o">&gt;</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></div><ul>
+<li>Service <code>TestEntityServiceImpl</code></li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Service</span>
+<span class="nd">@Transactional</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestEntityServiceImpl</span> <span class="kd">implements</span> <span class="n">TestEntityService</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="n">TestEntityRepository</span> <span class="n">repository</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSave</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">TestEntity</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">Lists</span><span class="o">.</span><span class="na">newArrayList</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">1000</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">TestEntity</span> <span class="n">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestEntity</span><span class="o">();</span>
+            <span class="n">entity</span><span class="o">.</span><span class="na">setLabel</span><span class="o">(</span><span class="n">RandomUtil</span><span class="o">.</span><span class="na">randomString</span><span class="o">(</span><span class="n">5</span><span class="o">));</span>
+            <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">entity</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="n">repository</span><span class="o">.</span><span class="na">saveAll</span><span class="o">(</span><span class="n">list</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><ul>
+<li>Controller <code>TestEntityController</code></li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@GetMapping</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#34;/saveTest&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveTest</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">testEntityService</span><span class="o">.</span><span class="na">testSave</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div><p>经过几次测试，耗时在 1.5s 左右。</p>
+<p>然后打开 batch 设置：</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w"></span><span class="k">spring.jpa</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="k">properties</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="k">hibernate</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="k">order_inserts</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">        </span><span class="k">order_updates</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">        </span><span class="k">generate_statistics</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">        </span><span class="k">jdbc</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="k">batch_size</span><span class="p">:</span><span class="w"> </span><span class="m">100</span><span class="w">
+</span><span class="w">          </span><span class="k">batch_versioned_data</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></code></pre></div><p>再次测试，可以看到日志：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="m">22219</span> nanoseconds spent acquiring <span class="m">1</span> JDBC connections<span class="p">;</span>
+<span class="m">0</span> nanoseconds spent releasing <span class="m">0</span> JDBC connections<span class="p">;</span>
+<span class="m">378002</span> nanoseconds spent preparing <span class="m">1</span> JDBC statements<span class="p">;</span>
+<span class="m">0</span> nanoseconds spent executing <span class="m">0</span> JDBC statements<span class="p">;</span>
+<span class="m">272261220</span> nanoseconds spent executing <span class="m">10</span> JDBC batches<span class="p">;</span>
+<span class="m">0</span> nanoseconds spent performing <span class="m">0</span> L2C puts<span class="p">;</span>
+<span class="m">0</span> nanoseconds spent performing <span class="m">0</span> L2C hits<span class="p">;</span>
+<span class="m">0</span> nanoseconds spent performing <span class="m">0</span> L2C misses<span class="p">;</span>
+<span class="m">353256353</span> nanoseconds spent executing <span class="m">1</span> flushes <span class="o">(</span>flushing a total of <span class="m">1000</span> entities and <span class="m">0</span> collections<span class="o">)</span><span class="p">;</span>
+<span class="m">0</span> nanoseconds spent executing <span class="m">0</span> partial-flushes <span class="o">(</span>flushing a total of <span class="m">0</span> entities and <span class="m">0</span> collections<span class="o">)</span>
+</code></pre></div><p>启用 batch 成功，同时耗时降到 300ms 左右。</p>
+<p>那为什么同事的工程会运行 2 分钟之久呢？</p>
+<h2 id="问题与解决">问题与解决</h2>
+<p>通过查看同事的工程以及日志，发现没有启用 batch，所以先启用了 batch 设置，但是再次测试发现耗时没有明显提升，
+进一步查看日志，发现了在插入前存在有大量的 select 语句。</p>
+<p>通过 jpa 源码可以知道，jpa 在保存前是会进行 <code>isNew</code> 判断的，所以问题应该出在 id 上。</p>
+<p><code>SimpleJpaRepository.class</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java">
+<span class="nd">@Transactional</span>
+<span class="kd">public</span> <span class="o">&lt;</span><span class="n">S</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">S</span> <span class="nf">save</span><span class="o">(</span><span class="n">S</span> <span class="n">entity</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">entityInformation</span><span class="o">.</span><span class="na">isNew</span><span class="o">(</span><span class="n">entity</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">em</span><span class="o">.</span><span class="na">persist</span><span class="o">(</span><span class="n">entity</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">entity</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">em</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">entity</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>进一步查看代码，发现同事的表的 id 并不是通过 jpa 的 <code>idGenerator</code> 指定，同时也没有 <code>@Version</code> 字段，导致每次都需要查询。</p>
+<p>于是加上 <code>@Version</code> 注解以及相应属性后，问题解决。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java">
+<span class="nd">@Version</span>
+<span class="kd">private</span> <span class="kt">int</span> <span class="n">version</span><span class="o">;</span>
+</code></pre></div>
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+<span class="separator"><a class="category" href="/categories/posts/">posts</a></span>
+
+        
+    <span class="separator"><a class="tag" href="/tags/java/">java</a><a class="tag" href="/tags/jpa/">JPA</a></span>
+
+      </div>
+    </div>
+
+    
+    <div id="fb_comments_container">
+      <h2>comments</h2>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "vanish1984" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>       
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+
+
+
+<script type="text/javascript" src="http://dm84.cc/js/jquery.min.86b1e8f819ee2d9099a783e50b49dff24282545fc40773861f9126b921532e4c.js" integrity="sha256-hrHo&#43;BnuLZCZp4PlC0nf8kKCVF/EB3OGH5EmuSFTLkw=" crossorigin="anonymous"></script>
+
+
+
+
+<script type="text/javascript" src="http://dm84.cc/js/bundle.min.0f9c74cb78f13d1f15f33daff4037c70354f98acfbb97a6f61708966675c3cae.js" integrity="sha256-D5x0y3jxPR8V8z2v9AN8cDVPmKz7uXpvYXCJZmdcPK4=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="http://dm84.cc/js/medium-zoom.min.92f21c856129f84aeb719459b3e6ac621a3032fd7b180a18c04e1d12083f8aba.js" integrity="sha256-kvIchWEp&#43;ErrcZRZs&#43;asYhowMv17GAoYwE4dEgg/iro=" crossorigin="anonymous"></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-177278316-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>
